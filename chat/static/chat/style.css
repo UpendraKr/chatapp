@@ -1,0 +1,65 @@
+body{
+
+    margin:0;
+    font-family:Arial;
+    background:#f2f2f2;
+}
+
+.container{
+
+    display:flex;
+    height:100vh;
+}
+
+.left-panel{
+
+    width:25%;
+    background:white;
+    padding:20px;
+    border-right:1px solid #ddd;
+}
+
+.right-panel{
+
+    width:75%;
+    display:flex;
+    flex-direction:column;
+}
+
+#messages{
+
+    flex:1;
+    overflow-y:auto;
+    padding:20px;
+}
+
+.message{
+
+    background:white;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+}
+
+.me{
+
+    background:#DCF8C6;
+}
+
+.bottom{
+
+    display:flex;
+    padding:20px;
+    background:white;
+}
+
+.bottom input{
+
+    flex:1;
+    padding:10px;
+}
+
+.bottom button{
+
+    margin-left:10px;
+}

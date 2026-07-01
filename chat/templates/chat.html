@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>AweSome Chat</title>
+
+    <link rel="stylesheet" href="{% static 'chat/style.css' %}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="left-panel">
+
+        <h3>Login User</h3>
+
+        <input id="sender" placeholder="Your username">
+
+        <h3>Chat With</h3>
+
+        <input id="receiver" placeholder="Receiver username">
+
+        <button onclick="loadChat()">
+            Open Chat
+        </button>
+
+    </div>
+
+
+    <div class="right-panel">
+
+        <div id="messages"></div>
+
+        <div class="bottom">
+
+            <input
+                id="message"
+                placeholder="Type message..."
+            >
+
+            <button onclick="sendMessage()">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="{% static 'chat/chat.js' %}"></script>
+
+</body>
+</html>

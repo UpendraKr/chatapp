@@ -1,0 +1,115 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+collegedekho/gcp.json
+collegedekho/gcp_assets.py
+Python-3.6.9/
+get-pip.py
+# Distribution / packaging
+.Python
+.vscode/
+env/
+.env
+.venv
+Python-3.6.9/
+get-pip.py
+venvp3/
+backup/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+dump.rdb
+
+# Translations
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Static folder
+static/
+media/
+
+# Pem file
+*.pem
+
+# Local settings file
+/collegedekho/local.py
+
+.DS_Store
+
+sass/
+.idea/
+collegedekho/local_settings.py
+collegedekho/aws_cred.py
+collegedekho/GeoIP.conf
+*.scssc
+*.ppk
+.vagrant
+
+collegeapp/
+college_apps/
+
+*scholarship.pdf
+venv
+.venv
+scripts/files/*
+.vagrant
+
+collegedekho/aws_cred.py
+test.py
+
+node_modules/
+/.project
+
+local_settings.py
+aws_cred.py
+GeoIP.conf
+prod-aws-migration-ecrpmo-cf2f5de015e0.json
+
+# RB common
+.reviewboardrc
+.env
+
+#as suggested by cardekho 
+./.git
+**/.git
+
+
