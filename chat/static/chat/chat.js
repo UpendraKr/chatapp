@@ -1,18 +1,19 @@
 function loadChat(){
-
     getMessages();
-
 }
 
 
 async function sendMessage(){
 
     let sender=document.getElementById("sender").value;
-
     let receiver=document.getElementById("receiver").value;
-
     let message=document.getElementById("message").value;
 
+    if (sender=="" || receiver=="" || message==""){
+        console.log("sender || receiver || message is empty");
+        return;
+
+    }
 
     await fetch("/chat/send-message/",{
 
@@ -31,11 +32,8 @@ async function sendMessage(){
         })
 
     });
-
     document.getElementById("message").value="";
-
     getMessages();
-
 }
 
 
@@ -93,6 +91,11 @@ async function getMessages(){
 
 setInterval(function(){
     console.log("<----------------- Refresh ------------------>")
+    if (sender=="" || receiver==""){
+
+        return;
+
+    }
     getMessages();
 
-},2000);
+}, 3000);
