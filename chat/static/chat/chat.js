@@ -1,22 +1,46 @@
+
+// ***************************** user & token check *****************************
 const token = localStorage.getItem("access");
 const currentUser = localStorage.getItem("username");
+let socket = null;
 
 if (!token) {
-
     window.location.href = "/login/";
-
 } else {
-
     document.getElementById("current-user").textContent = currentUser;
+    connectSocket();
+}
+
+//  ******************* socket connection *******************
+
+
+function connectSocket() {
+
+    socket = new WebSocket("ws://127.0.0.1:8000/ws/chat/");
+    socket.onopen = function () {
+        console.log("✅ WebSocket Connected");
+        // socket.send("Hello Server");
+    };
+
+    socket.onclose = function () {
+        console.log("❌ WebSocket Closed");
+    };
+
+    socket.onerror = function (error) {
+        console.error(error);
+    };
+
+    socket.onmessage = function (event) {
+        console.log("Received:", event.data);
+    };
 
 }
 
-function logout(){
 
+function logout(){
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     localStorage.removeItem("username");
-
     window.location.href = "/login/";
 }
 

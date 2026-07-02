@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,7 +43,35 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'chat',
+    'channels',
 ]
+
+ASGI_APPLICATION = "chatapp.asgi.application"
+
+CHANNEL_LAYERS = {
+
+    "default": {
+
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+
+    }
+
+}
+
+
+
+# Customizing JWT token lifetime
+SIMPLE_JWT = {
+    # Increase Access Token expiration time (e.g., to 30 minutes)
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=3000),
+    
+    # Increase Refresh Token expiration time (e.g., to 15 days)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    
+    # Recommended settings when extending token lifetimes:
+    'ROTATE_REFRESH_TOKENS': True,      # Gives a new refresh token when used
+    'BLACKLIST_AFTER_ROTATION': True,   # Invalidates used refresh tokens for security
+}
 
 
 REST_FRAMEWORK = {
