@@ -16,7 +16,7 @@ if (!token) {
 
 function connectSocket() {
 
-    socket = new WebSocket("ws://127.0.0.1:8000/ws/chat/");
+    socket = new WebSocket(`ws://127.0.0.1:8000/ws/chat/?token=${token}`);
     socket.onopen = function () {
         console.log("✅ WebSocket Connected");
         // socket.send("Hello Server");
