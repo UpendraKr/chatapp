@@ -15,10 +15,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from chat.views import chat_page
+from chat.views import chat_page, register_page, login_page
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("api/token/",TokenObtainPairView.as_view(),),
+    path("api/token/refresh/", TokenRefreshView.as_view()),
     path("chat/", include("chat.urls")),
-    path("chat-app/",chat_page),
+
+
+    # chat html pages
+    path("register/", register_page),
+    path("login/", login_page),
+    path("chat-app/", chat_page),
+
 ]

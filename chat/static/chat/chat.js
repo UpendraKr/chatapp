@@ -1,16 +1,36 @@
+const token = localStorage.getItem("access");
+const currentUser = localStorage.getItem("username");
+
+if (!token) {
+
+    window.location.href = "/login/";
+
+} else {
+
+    document.getElementById("current-user").textContent = currentUser;
+
+}
+
+function logout(){
+
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("username");
+
+    window.location.href = "/login/";
+}
+
 function loadChat(){
     getMessages();
 }
 
 
 async function sendMessage(){
-
-    let sender=document.getElementById("sender").value;
     let receiver=document.getElementById("receiver").value;
     let message=document.getElementById("message").value;
 
-    if (sender=="" || receiver=="" || message==""){
-        console.log("sender || receiver || message is empty");
+    if (receiver=="" || message==""){
+        console.log("receiver || message is empty");
         return;
 
     }
@@ -19,13 +39,12 @@ async function sendMessage(){
 
         method:"POST",
 
-        headers:{
-            "Content-Type":"application/json"
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("access")
         },
 
         body:JSON.stringify({
-
-            sender:sender,
             receiver:receiver,
             message:message
 
@@ -39,11 +58,9 @@ async function sendMessage(){
 
 async function getMessages(){
 
-    let sender=document.getElementById("sender").value;
-
     let receiver=document.getElementById("receiver").value;
 
-    if (sender=="" || receiver==""){
+    if (receiver==""){
 
         return;
 
@@ -51,7 +68,12 @@ async function getMessages(){
 
     let response = await fetch(
 
-        `/chat/chat-history/?user1=${sender}&user2=${receiver}`
+        `/chat/chat-history/?receiver=${receiver}`,
+        {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("access")
+            }
+        }
 
     );
 
@@ -67,7 +89,7 @@ async function getMessages(){
 
         html.classList.add("message");
 
-        if(msg.sender==sender){
+        if(msg.sender==currentUser){
 
             html.classList.add("me");
         }
@@ -91,7 +113,8 @@ async function getMessages(){
 
 setInterval(function(){
     console.log("<----------------- Refresh ------------------>")
-    if (sender=="" || receiver==""){
+    let receiver=document.getElementById("receiver").value;
+    if (receiver==""){
 
         return;
 

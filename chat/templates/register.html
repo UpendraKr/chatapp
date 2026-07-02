@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Register</title>
+
+</head>
+
+<body>
+
+<h2>Create Account</h2>
+
+<input
+    id="username"
+    placeholder="Username"
+>
+
+<br><br>
+
+<input
+    id="password"
+    type="password"
+    placeholder="Password"
+>
+
+<br><br>
+
+<button onclick="register()">
+
+Register
+
+</button>
+
+<p>
+
+Already have an account?
+
+<a href="/login/">
+
+Login
+
+</a>
+
+</p>
+
+<script src="{% static 'chat/register.js' %}"></script>
+
+</body>
+
+</html>

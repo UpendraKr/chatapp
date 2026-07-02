@@ -9,21 +9,19 @@ from django.db.models import Q
 
 from .models import Message
 from .serializers import MessageSerializer
+from .services.message_service import MessageService
+from rest_framework.permissions import IsAuthenticated
 
 
 class SendMessage(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
 
-        sender = User.objects.get(username=request.data["sender"])
-
-        receiver = User.objects.get(
-            username=request.data["receiver"]
-        )
-
-        message = Message.objects.create(
-            sender=sender,
-            receiver=receiver,
+        message = MessageService.send_message(
+            sender=request.user,
+            receiver_username=request.data["receiver"],
             message=request.data["message"]
         )
 
@@ -34,32 +32,34 @@ class SendMessage(APIView):
 
 class ChatHistory(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
 
-        username1 = request.GET.get("user1")
+        receiver = User.objects.get(
+            username=request.GET["receiver"]
+        )
 
-        username2 = request.GET.get("user2")
-
-        user1 = User.objects.get(username=username1)
-
-        user2 = User.objects.get(username=username2)
-
-        messages = Message.objects.filter(
-
-            Q(sender=user1, receiver=user2)
-
-            |
-
-            Q(sender=user2, receiver=user1)
-
+        messages = MessageService.get_messages(
+            request.user,
+            receiver
         )
 
         serializer = MessageSerializer(messages, many=True)
-
         return Response(serializer.data)
 
 
 
 def chat_page(request):
 
-    return render(request,"chat.html")
+    return render(request, "chat.html")
+
+
+def register_page(request):
+
+    return render(request, "register.html")
+
+
+def login_page(request):
+
+    return render(request, "login.html")
