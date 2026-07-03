@@ -2,13 +2,26 @@
 // ***************************** user & token check *****************************
 const token = localStorage.getItem("access");
 const currentUser = localStorage.getItem("username");
+let selectedUser = null;
 let socket = null;
 
 if (!token) {
     window.location.href = "/login/";
 } else {
+    loadUsers();
     document.getElementById("current-user").textContent = currentUser;
     connectSocket();
+}
+
+async function loadUsers() {
+    const response = await fetch("/chat/users/", {
+        headers: {
+            Authorization:
+                "Bearer " + token
+        }
+    });
+    const users = await response.json();
+    renderUsers(users);
 }
 
 //  ******************* socket connection *******************
@@ -31,8 +44,19 @@ function connectSocket() {
     socket.onmessage = function (event) {
         const data = JSON.parse(event.data);
         console.log("Received:", data);
-        // getMessages();
+        
+        if (!selectedUser) return;
+
+        const belongsToConversation =
+            (data.sender === selectedUser.username && data.receiver === currentUser)
+            ||
+            (data.sender === currentUser && data.receiver === selectedUser.username);
+
+        if (!belongsToConversation)
+            return;
+
         appendMessage(data);
+
     };
 
 }
@@ -48,22 +72,48 @@ function loadChat(){
     getMessages();
 }
 
+async function openConversation(user) {
+    selectedUser = user;
+    // document.getElementById("chat-user").innerText = user.username;
+    await getMessages();
+}
 
 async function sendMessage(){
-    let receiver=document.getElementById("receiver").value;
+    if (!selectedUser){
+        alert("Select a user");
+        return;
+    }
     let message=document.getElementById("message").value;
 
-    if (receiver=="" || message==""){
-        console.log("receiver || message is empty");
+    if (message==""){
+        console.log("message is empty");
         return;
     }
     socket.send(JSON.stringify({
-        receiver: receiver,
+        receiver: selectedUser.username,
         message: message
     }));
     document.getElementById("message").value="";
 }
 
+
+function renderUsers(users) {
+
+    const div = document.getElementById("user-list");
+
+    div.innerHTML = "";
+
+    users.forEach(user => {
+        const item = document.createElement("div");
+        item.className = "user-item";
+        item.innerText = user.username;
+        item.onclick = function() {
+            openConversation(user);
+        };
+        div.appendChild(item);
+    });
+
+}
 
 function appendMessage(msg) {
 
@@ -88,13 +138,15 @@ function appendMessage(msg) {
 
 
 async function getMessages(){
-    let receiver=document.getElementById("receiver").value;
-    if (receiver==""){
+    // let receiver=document.getElementById("receiver").value;
+    // if (receiver==""){
+    //     return;
+    // }
+    if (!selectedUser)
         return;
-    }
-
+    
     let response = await fetch(
-        `/chat/chat-history/?receiver=${receiver}`,
+        `/chat/chat-history/?receiver=${selectedUser.username}`,
         {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("access")
