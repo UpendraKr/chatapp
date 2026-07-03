@@ -42,11 +42,8 @@ function connectSocket() {
     };
 
     socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        console.log("Received:", data);
-        
+        const data = JSON.parse(event.data);        
         if (!selectedUser) return;
-
         const belongsToConversation =
             (data.sender === selectedUser.username && data.receiver === currentUser)
             ||
@@ -56,7 +53,6 @@ function connectSocket() {
             return;
 
         appendMessage(data);
-
     };
 
 }
@@ -72,10 +68,28 @@ function loadChat(){
     getMessages();
 }
 
-async function openConversation(user) {
+async function openConversation(user, itemEl) {
     selectedUser = user;
-    // document.getElementById("chat-user").innerText = user.username;
+
+    // Highlight the selected user in the list
+    document.querySelectorAll(".user-item").forEach(el => el.classList.remove("active"));
+    if (itemEl) itemEl.classList.add("active");
+
+    // Update chat header
+    document.getElementById("chat-user").innerText = user.username;
+    const avatar = document.getElementById("chat-avatar");
+    avatar.innerText = user.username.charAt(0);
+    avatar.classList.add("show");
+
+    // Mobile: switch to conversation view
+    document.getElementById("container").classList.add("chat-open");
+
     await getMessages();
+}
+
+function closeConversation() {
+    // Mobile: go back to the user list
+    document.getElementById("container").classList.remove("chat-open");
 }
 
 async function sendMessage(){
@@ -100,19 +114,57 @@ async function sendMessage(){
 function renderUsers(users) {
 
     const div = document.getElementById("user-list");
-
     div.innerHTML = "";
 
     users.forEach(user => {
         const item = document.createElement("div");
         item.className = "user-item";
-        item.innerText = user.username;
+
+        const avatar = document.createElement("div");
+        avatar.className = "user-avatar";
+        avatar.innerText = (user.username || "?").charAt(0);
+
+        const name = document.createElement("div");
+        name.className = "user-name";
+        name.innerText = user.username;
+
+        item.appendChild(avatar);
+        item.appendChild(name);
+
         item.onclick = function() {
-            openConversation(user);
+            openConversation(user, item);
         };
         div.appendChild(item);
     });
 
+}
+
+function formatDateTime(value) {
+    if (!value) return "";
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return value; // fall back to raw string if unparseable
+
+    const now = new Date();
+    const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    const sameDay = date.toDateString() === now.toDateString();
+
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+
+    if (sameDay) return time;
+    if (isYesterday) return `Yesterday ${time}`;
+
+    const sameYear = date.getFullYear() === now.getFullYear();
+    const dateStr = date.toLocaleDateString([], {
+        day: "2-digit",
+        month: "short",
+        year: sameYear ? undefined : "numeric"
+    });
+
+    return `${dateStr}, ${time}`;
 }
 
 function appendMessage(msg) {
@@ -126,8 +178,8 @@ function appendMessage(msg) {
 
     html.innerHTML = `
         <b>${msg.sender.toUpperCase()}</b><br>
-        <small><i>${msg.message}</i></small><br>
-        <small>${msg.created_at}</small>
+        <span class="msg-text">${msg.message}</span>
+        <small class="msg-time">${formatDateTime(msg.created_at)}</small>
     `;
 
     div.appendChild(html);
@@ -138,10 +190,6 @@ function appendMessage(msg) {
 
 
 async function getMessages(){
-    // let receiver=document.getElementById("receiver").value;
-    // if (receiver==""){
-    //     return;
-    // }
     if (!selectedUser)
         return;
     

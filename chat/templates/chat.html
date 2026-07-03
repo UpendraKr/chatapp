@@ -1,8 +1,11 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>AweSome Chat</title>
 
@@ -14,40 +17,45 @@
 
 <div class="topbar">
 
-    <span>Logged in as <b id="current-user"></b></span>
+    <span class="topbar-title">💬 AweSome Chat</span>
 
-    <button onclick="logout()">Logout</button>
+    <div class="topbar-right">
+        <span class="me-label">Logged in as <b id="current-user"></b></span>
+        <button onclick="logout()">Logout</button>
+    </div>
 
 </div>
 
-<div class="container">
+<div class="container" id="container">
 
     <div class="left-panel">
 
-        <h3>Chat With</h3>
-        
-        <div id="user-list">
+        <h3 class="panel-heading">Chats</h3>
 
-        </div>
-
-        <!-- <input id="receiver" placeholder="Receiver username">
-
-        <button onclick="loadChat()">
-            Open Chat
-        </button> -->
-
+        <div id="user-list"></div>
     </div>
 
 
     <div class="right-panel">
 
-        <div id="messages"></div>
+        <div class="chat-header">
+            <button class="back-btn" onclick="closeConversation()" aria-label="Back">←</button>
+            <div class="chat-header-avatar" id="chat-avatar"></div>
+            <span id="chat-user">Select a chat</span>
+        </div>
+
+        <div id="messages">
+            <div class="empty-state" id="empty-state">
+                <p>👋 Select a user to start chatting</p>
+            </div>
+        </div>
 
         <div class="bottom">
 
             <input
                 id="message"
                 placeholder="Type message..."
+                onkeydown="if(event.key==='Enter'){sendMessage()}"
             >
 
             <button onclick="sendMessage()">
