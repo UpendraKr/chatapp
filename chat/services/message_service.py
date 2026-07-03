@@ -10,25 +10,14 @@ class MessageService:
     @staticmethod
     def send_message(
         sender,
-        receiver_username,
+        receiver,
         message
     ):
 
-        receiver = User.objects.get(
-            username=receiver_username
-        )
-
-        conversation = ConversationService.get_or_create(
-            sender,
-            receiver
-        )
-
+        conversation = ConversationService.get_or_create(sender,receiver)
         return Message.objects.create(
-
             conversation=conversation,
-
             sender=sender,
-
             message=message
         )
 

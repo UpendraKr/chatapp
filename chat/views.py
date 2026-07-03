@@ -18,10 +18,10 @@ class SendMessage(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-
+        receiver = User.objects.get(username=request.data["receiver"])
         message = MessageService.send_message(
             sender=request.user,
-            receiver_username=request.data["receiver"],
+            receiver=receiver,
             message=request.data["message"]
         )
 

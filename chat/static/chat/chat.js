@@ -12,8 +12,6 @@ if (!token) {
 }
 
 //  ******************* socket connection *******************
-
-
 function connectSocket() {
 
     socket = new WebSocket(`ws://127.0.0.1:8000/ws/chat/?token=${token}`);
@@ -31,11 +29,13 @@ function connectSocket() {
     };
 
     socket.onmessage = function (event) {
-        console.log("Received:", event.data);
+        const data = JSON.parse(event.data);
+        console.log("Received:", data);
+        // getMessages();
+        appendMessage(data);
     };
 
 }
-
 
 function logout(){
     localStorage.removeItem("access");
@@ -56,93 +56,55 @@ async function sendMessage(){
     if (receiver=="" || message==""){
         console.log("receiver || message is empty");
         return;
+    }
+    socket.send(JSON.stringify({
+        receiver: receiver,
+        message: message
+    }));
+    document.getElementById("message").value="";
+}
 
+
+function appendMessage(msg) {
+
+    let div = document.getElementById("messages");
+    let html = document.createElement("div");
+    html.classList.add("message");
+    if (msg.sender === currentUser) {
+        html.classList.add("me");
     }
 
-    await fetch("/chat/send-message/",{
+    html.innerHTML = `
+        <b>${msg.sender.toUpperCase()}</b><br>
+        <small><i>${msg.message}</i></small><br>
+        <small>${msg.created_at}</small>
+    `;
 
-        method:"POST",
+    div.appendChild(html);
 
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("access")
-        },
-
-        body:JSON.stringify({
-            receiver:receiver,
-            message:message
-
-        })
-
-    });
-    document.getElementById("message").value="";
-    getMessages();
+    // Scroll to the latest message
+    div.scrollTop = div.scrollHeight;
 }
 
 
 async function getMessages(){
-
     let receiver=document.getElementById("receiver").value;
-
     if (receiver==""){
-
         return;
-
     }
 
     let response = await fetch(
-
         `/chat/chat-history/?receiver=${receiver}`,
         {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("access")
             }
         }
-
     );
-
     let data = await response.json();
-
     let div = document.getElementById("messages");
-
-    div.innerHTML="";
-
-    data.forEach(msg=>{
-
-        let html=document.createElement("div");
-
-        html.classList.add("message");
-
-        if(msg.sender==currentUser){
-
-            html.classList.add("me");
-        }
-
-        html.innerHTML=
-
-        `<b>${msg.sender.toUpperCase()}</b><br>
-
-        <small><i>${msg.message}</i></small>
-
-        <br>
-
-        <small>${msg.created_at}</small>`;
-
-        div.appendChild(html);
-
+    div.innerHTML = "";
+    data.forEach(msg => {
+        appendMessage(msg);
     });
-
 }
-
-
-setInterval(function(){
-    console.log("<----------------- Refresh ------------------>")
-    let receiver=document.getElementById("receiver").value;
-    if (receiver==""){
-
-        return;
-
-    }
-    getMessages();
-
-}, 3000);
